@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persons List</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+       body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container {
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+        }
+
+        .table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .table thead th:hover {
+            background-color: #495057;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table td {
+            text-align: center;
+        }
+
+        .table-header-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .small-dropdown {
+            width: 80px;
+            display: inline-block;
+        }
+
+        .search-input {
+            margin-left: 10px;
+            max-width: 200px;
+        }
+
+        .pagination-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .pagination-info span {
+            margin-right: 10px;
+        }
+
+        .dropdown-label {
+            margin-right: 5px;
+        }
+
+        .action-icons i {
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 18px;
+        }
+
+        .action-icons .fa-eye {
+            color: seagreen;
+        }
+
+        .action-icons .fa-pen {
+            color: dodgerblue;
+        }
+
+        .action-icons .fa-trash {
+            color: red;
+        }
+
+        .pagination {
+            justify-content: flex-end;
+        }
+
+        .fas.fa-sort,
+        .fas.fa-sort-up,
+        .fas.fa-sort-down {
+            margin-left: 8px;
+            font-size: 12px;
+        }
+
+        .right {
+            display: flex;
+            flex-direction: row;
+        }
+        .sidebar {
+    background: linear-gradient(135deg, #2E7D32 0%, #000 100%); /* Dark green to black gradient */
+    padding: 20px 10px 20px 10px;
+    height: 100vh;
+    color: #fff;
+    position: fixed;
+    width: 250px;
+    top: 0;
+    left: 0;
+    overflow: hidden; /* Hide extra content */
+}
+
+.sidebar h4 {
+    color: #fff;
+    margin-bottom: 30px;
+    font-size: 1.2rem;
+}
+
+.sidebar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sidebar .profile-name {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.sidebar a {
+    color: #b0bec5;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #424242; /* Darker hover effect */
+    color: #fff; /* White on hover */
+    padding-left: 5px;
+}
+
+.sidebar a i {
+    margin-right: 10px;
+}
+
+.sidebar .nav-item {
+    padding: 10px 0;
+}
+
+
+/* Adjust main content to accommodate the sidebar */
+.content {
+    padding: 20px 20px 20px 235px;
+}
+
+
+        .table-container {
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+        }
+
+        .table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .table thead th:hover {
+            background-color: #495057;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table td {
+            text-align: center;
+        }
+
+        .table-header-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .search-input {
+            margin-left: 10px;
+            max-width: 200px;
+        }
+
+        .action-icons i {
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 18px;
+        }
+
+        .pagination {
+            justify-content: flex-end;
+        }
+
+        .fas.fa-sort,
+        .fas.fa-sort-up,
+        .fas.fa-sort-down {
+            margin-left: 8px;
+            font-size: 12px;
+        }
+
+        .right {
+            display: flex;
+            flex-direction: row;
+        }
+    </style>
+</head>
+
+<body>
+
+         <!-- Left Sidebar -->
+    <div class="sidebar">
+        <h4>Navigation</h4>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/complain/index.html" class="nav-item">
+            <i class="fas fa-tachometer-alt"></i>Complain
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/event/index.html" class="nav-item">
+            <i class="fas fa-users"></i>Event
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/fund/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Fund
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/house/index.html" class="nav-item">
+            <i class="fas fa-file-alt"></i>House
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/land/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Land
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/person/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Person
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/registor/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Registor
+        </a>
+    </div>
+    <!-- Main Content -->
+    <div class="content">
+        <div class="container mt-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Persons List</h3>
+                <button class="btn btn-primary" onclick="window.location.href='D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/person/create.html'">Create Person</button>
+            </div>
+
+            <!-- Table Header Actions -->
+            <div class="table-header-actions">
+                <div class="left">
+                    <label for="pageSize" class="dropdown-label">Show</label>
+                    <select id="pageSize" class="form-control small-dropdown" onchange="changePageSize()">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                    <span>entries</span>
+                </div>
+                <div class="right">
+                    <button style="height: 39px;" class="btn btn-secondary" data-toggle="modal" data-target="#filterModal">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <input type="text" id="search" class="form-control search-input" placeholder="Search..."
+                        oninput="searchPersons()" />
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th onclick="sortTable('name')" class="sort-header">
+                                Name <i class="fas" id="sort-icon-name"></i>
+                            </th>
+                            <th onclick="sortTable('occupation')" class="sort-header">
+                                Occupation <i class="fas" id="sort-icon-occupation"></i>
+                            </th>
+                            <th onclick="sortTable('age')" class="sort-header">
+                                Age <i class="fas" id="sort-icon-age"></i>
+                            </th>
+                            <th onclick="sortTable('nation')" class="sort-header">
+                                Nation <i class="fas" id="sort-icon-nation"></i>
+                            </th>
+                            <th onclick="sortTable('religion')" class="sort-header">
+                                Religion <i class="fas" id="sort-icon-religion"></i>
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="person-table-body">
+                        <!-- Person rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination and Information -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="pagination-info">
+                    <span id="showing-info">Showing 1 to 10 of 100 entries</span>
+                </div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination" id="pagination">
+                        <!-- Pagination links will be dynamically inserted here -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let page = 1;
+        let size = 10;
+        let orderBy = 'id';
+        let order = 'ASC';
+        let totalItems = 100;
+        let filters = {};
+
+        document.addEventListener('DOMContentLoaded', fetchPersons);
+
+        function fetchPersons() {
+            const filterParams = new URLSearchParams(filters).toString();
+            fetch(`http://localhost:8080/api/person/?page=${page - 1}&size=${size}&order_by=${orderBy}&order=${order}&${filterParams}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateTable(data.persons);
+                    updatePagination(data.totalPages);
+                    totalItems = data.totalItems;
+                    updateShowingInfo();
+                    updateSortIcons();
+                })
+                .catch(error => console.error('Error fetching persons:', error));
+        }
+
+        function applyFilters() {
+            filters.occupation = document.getElementById('filterOccupation').value;
+            filters.ageMin = document.getElementById('filterAgeMin').value;
+            filters.ageMax = document.getElementById('filterAgeMax').value;
+            filters.nation = document.getElementById('filterNation').value;
+            filters.religion = document.getElementById('filterReligion').value;
+
+            $('#filterModal').modal('hide');
+            fetchPersons();
+        }
+
+        function searchPersons() {
+            const searchQuery = document.getElementById('search').value;
+            filters.search = searchQuery;
+            fetchPersons();
+        }
+
+        function sortTable(column) {
+            orderBy = column;
+            order = order === 'ASC' ? 'DESC' : 'ASC';
+            fetchPersons();
+        }
+
+        function updateSortIcons() {
+            const columns = ['name', 'occupation', 'age', 'nation', 'religion'];
+            columns.forEach(col => {
+                const icon = document.getElementById(`sort-icon-${col}`);
+                icon.className = 'fas'; // reset icon classes
+                if (col === orderBy) {
+                    if (order === 'ASC') {
+                        icon.classList.add('fa-sort-up');
+                    } else {
+                        icon.classList.add('fa-sort-down');
+                    }
+                } else {
+                    icon.classList.remove('fa-sort');
+                }
+            });
+        }
+
+        function changePageSize() {
+            size = document.getElementById('pageSize').value;
+            fetchPersons();
+        }
+
+        function calculateAge(dob) {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const dayDiff = today.getDate() - birthDate.getDate();
+
+    // Adjust age if the birth date hasn't occurred yet this year
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+    }
+
+    return age;
+}
+
+function updateTable(persons) {
+    const tbody = document.getElementById('person-table-body');
+    tbody.innerHTML = ''; // Clear existing rows
+
+    persons.forEach(person => {
+        const age = person.dob ? calculateAge(person.dob) : 'N/A'; // Calculate age based on dob
+        const row = `
+            <tr>
+                <td>${person.id}</td>
+                <td>${person.name}</td>
+                <td>${person.occupation}</td>
+                <td>${age}</td> <!-- Display calculated age -->
+                <td>${person.nation ? person.nation : 'N/A'}</td>
+                <td>${person.religion ? person.religion : 'N/A'}</td>
+                <td class="action-icons">
+                    <i class="fas fa-eye" onclick='viewPerson("${person.id}")'></i>
+                    <i class="fas fa-pen" onclick='editPerson("${person.id}")'></i>
+                    <i class="fas fa-trash" onclick='deletePerson("${person.id}")'></i>
+                </td>
+            </tr>`;
+        tbody.insertAdjacentHTML('beforeend', row); // Insert the new row
+    });
+}
+
+
+        function updatePagination(totalPages) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageItem = `<li class="page-item ${i === page ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a>
+                </li>`;
+                pagination.insertAdjacentHTML('beforeend', pageItem);
+            }
+        }
+
+        function goToPage(newPage) {
+            page = newPage;
+            fetchPersons();
+        }
+
+        function updateShowingInfo() {
+            const start = (page - 1) * size + 1;
+            const end = Math.min(page * size, totalItems);
+            document.getElementById('showing-info').textContent = `Showing ${start} to ${end} of ${totalItems} entries`;
+        }
+
+        // View person details by navigating to view.html with the person's ID in the URL
+    function viewPerson(id) {
+        console.log(id)
+        window.location.href = `view.html?id=${id}`;
+    }
+
+    // Edit person details by navigating to update.html with the person's ID in the URL
+    function editPerson(id) {
+        window.location.href = `update.html?id=${id}`;
+    }
+
+// Delete person by sending a DELETE request to the API and reload the table upon success
+function deletePerson(id) {
+    if (confirm('Are you sure you want to delete this person?')) {
+        fetch(`http://localhost:8080/api/person/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Person deleted successfully');
+                // Optionally refresh the table or redirect to another page
+                location.reload(); // Reload the page to refresh the table
+            } else {
+                alert('Error deleting person');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting person');
+        });
+    }
+}
+
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

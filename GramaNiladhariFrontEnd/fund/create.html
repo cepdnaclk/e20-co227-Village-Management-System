@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create or Update Person Fund</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+    /* Sidebar Styles */
+    .sidebar {
+        background: linear-gradient(135deg, #2E7D32 0%, #000 100%);
+        padding: 20px 10px;
+        height: 100vh;
+        color: #fff;
+        position: fixed;
+        width: 250px;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+    }
+
+    .sidebar h4 {
+        color: #fff;
+        margin-bottom: 30px;
+        font-size: 1.2rem;
+    }
+
+    .sidebar img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-bottom: 20px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .sidebar .profile-name {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+    }
+
+    .sidebar a {
+        color: #b0bec5;
+        text-decoration: none;
+        display: block;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .sidebar a:hover {
+        background-color: #424242;
+        color: #fff;
+        padding-left: 5px;
+    }
+
+    .sidebar a i {
+        margin-right: 10px;
+    }
+
+    /* Adjust main content to accommodate the sidebar */
+    .container {
+        margin-left: 260px;
+        padding: 40px;
+    }
+
+    /* Form Styles */
+    .form-label {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .form-control {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.25rem;
+        border: 1px solid #ced4da;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+    }
+
+    /* Tag Input Styles */
+    .tag-input-container {
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        padding: 0.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-height: 42px;
+        position: relative;
+    }
+
+    .tag {
+        background-color: #f1f3f5;
+        border-radius: 20px;
+        padding: 0.4rem 1rem;
+        display: inline-flex;
+        align-items: center;
+        position: relative;
+        font-size: 1rem;
+        border: 1px solid #ced4da;
+        transition: all 0.2s ease;
+    }
+
+    .remove-tag {
+        cursor: pointer;
+        font-weight: bold;
+        margin-left: 8px;
+        color: #dc3545;
+        font-size: 18px;
+    }
+
+    .tag-input {
+        border: none;
+        outline: none;
+        flex-grow: 1;
+        min-width: 150px;
+        font-size: 1rem;
+        padding: 0.2rem;
+    }
+
+    /* Autocomplete Styles */
+    .autocomplete-list {
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        max-height: 200px;
+        overflow-y: auto;
+        width: 100%;
+        z-index: 10;
+    }
+
+    .autocomplete-list .card {
+        padding: 10px;
+        cursor: pointer;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        margin-bottom: 5px;
+        transition: background-color 0.2s ease;
+    }
+
+    .autocomplete-list .card:hover {
+        background-color: #f1f1f1;
+    }
+
+    .autocomplete-list .name {
+        font-size: 1rem;
+    }
+
+    /* Button Styles */
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    /* Toast Notification Styles */
+    .toast {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+    }
+
+    .toast-body {
+        font-size: 1rem;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+    }
+
+    .btn-close:hover {
+        opacity: 0.7;
+    }
+</style>
+
+</head>
+
+<body>
+
+       <!-- Left Sidebar -->
+    <div class="sidebar">
+        <h4>Navigation</h4>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/complain/index.html" class="nav-item">
+            <i class="fas fa-tachometer-alt"></i>Complain
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/event/index.html" class="nav-item">
+            <i class="fas fa-users"></i>Event
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/fund/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Fund
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/house/index.html" class="nav-item">
+            <i class="fas fa-file-alt"></i>House
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/land/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Land
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/person/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Person
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/registor/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Registor
+        </a>
+    </div>
+
+<div class="container mt-5">
+    <h3 id="page-title">Create Person Fund</h3>
+    <form id="person-fund-form">
+        <div class="mb-3">
+            <label for="name" class="form-label">Fund Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Enter fund name" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" step="0.01" class="form-control" id="amount" placeholder="Enter amount" required>
+        </div>
+
+        <div class="mb-3 position-relative">
+            <label for="persons" class="form-label">Select Persons</label>
+            <div class="tag-input-container" id="tag-input-container">
+                <input type="text" id="person-input" class="tag-input" placeholder="Add a person..." autocomplete="off">
+            </div>
+            <div id="autocomplete-list" class="autocomplete-list d-none"></div>
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn btn-primary">Create Fund</button>
+    </form>
+</div>
+
+<!-- Toast notification -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="toast" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive"
+         aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Fund created successfully!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    let selectedPersons = [];
+    let currentFocus = -1;
+    let options = [];
+    let isUpdatePage = false;
+    const personInput = document.getElementById('person-input');
+    const tagContainer = document.getElementById('tag-input-container');
+    const autocompleteList = document.getElementById('autocomplete-list');
+    const toastEl = document.getElementById('toast');
+    const toast = new bootstrap.Toast(toastEl);
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const fundId = urlParams.get('id');
+    const pageTitle = document.getElementById('page-title');
+    const submitBtn = document.getElementById('submit-btn');
+
+    // Check if update page
+    if (fundId) {
+        isUpdatePage = true;
+        pageTitle.innerText = "Update Person Fund";
+        submitBtn.innerText = "Update Fund";
+
+        // Fetch fund data by id and prefill the form
+        fetch(`http://localhost:8080/api/person-fund/${fundId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('name').value = data.name;
+                document.getElementById('amount').value = data.amount;
+                console.log(data)
+                data.persons.forEach(id => fetchPersonById(id));
+                // Disable the name field
+                document.getElementById('name').disabled = true;
+            })
+            .catch(error => console.error('Error fetching fund data:', error));
+    }
+
+    // Fetch person by ID
+    function fetchPersonById(id) {
+        fetch(`http://localhost:8080/api/person/${id}`)
+            .then(response => response.json())
+            .then(person => addTag({name: person.name, id: person.id}))
+            // .then(person => console.log(person))
+            .catch(error => console.error('Error fetching person:', error));
+    }
+
+    // Fetch persons for autocomplete
+    function fetchPersons(query) {
+        fetch(`http://localhost:8080/api/person/search?keyword=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                options = data;
+                renderAutocompleteList(query);
+            })
+            .catch(error => console.error('Error fetching persons:', error));
+    }
+
+    // Render autocomplete list
+    function renderAutocompleteList(query) {
+        autocompleteList.innerHTML = '';
+        autocompleteList.classList.remove('d-none');
+        const filteredOptions = options.filter(option => option.name.toLowerCase().includes(query.toLowerCase()) && !selectedPersons.includes(option.name));
+
+        if (filteredOptions.length > 0) {
+            filteredOptions.forEach(option => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.innerHTML = `<div class="name">${option.name}</div><div class="nic">NIC: ${option.id}</div>`;
+                card.onclick = () => addTag(option);
+                autocompleteList.appendChild(card);
+            });
+        } else {
+            autocompleteList.classList.add('d-none');
+        }
+    }
+
+    // Add person to tag list
+    function addTag(option) {
+        if (selectedPersons.includes(option.name)) return;
+
+        const tag = document.createElement('span');
+        tag.classList.add('tag');
+        tag.innerHTML = `${option.name} <span class="remove-tag">&times;</span>`;
+        tagContainer.insertBefore(tag, personInput);
+
+        selectedPersons.push(option.id);
+
+        tag.querySelector('.remove-tag').onclick = () => removeTag(option.name);
+        personInput.value = '';
+        autocompleteList.classList.add('d-none');
+    }
+
+    // Remove tag
+    function removeTag(name) {
+        selectedPersons = selectedPersons.filter(person => person !== name);
+        const tags = Array.from(tagContainer.getElementsByClassName('tag'));
+        tags.forEach(tag => {
+            if (tag.innerText.includes(name)) tag.remove();
+        });
+    }
+
+    // Handle input for person search
+    personInput.addEventListener('input', function () {
+        const query = personInput.value;
+        if (query.length > 0) {
+            fetchPersons(query);
+        } else {
+            autocompleteList.classList.add('d-none');
+        }
+    });
+
+    // Handle form submission
+    document.getElementById('person-fund-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const fundData = {
+            name: document.getElementById('name').value,
+            amount: parseFloat(document.getElementById('amount').value),
+            persons: selectedPersons,
+        };
+
+        const url = isUpdatePage
+            ? `http://localhost:8080/api/person-fund/${fundId}`
+            : 'http://localhost:8080/api/person-fund';
+
+        const method = isUpdatePage ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(fundData),
+        })
+            .then(response => {
+                if (response.ok) {
+                    toast.show();
+                    setTimeout(() => window.location.href = 'index.html', 2000);
+                } else {
+                    console.error('Error:', response.statusText);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+  })
+</script>
+
+</body>
+</html>

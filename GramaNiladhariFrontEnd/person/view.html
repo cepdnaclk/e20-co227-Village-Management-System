@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Person Profile</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAA-IKOUxj5n6YYuxeCSiRvgXbekhy0PQ0&libraries=drawing,geometry&callback=initMap" async defer></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .complaints-table,
+        .lands-table,
+        .funds-table {
+            margin-top: 20px;
+        }
+
+        .house-members {
+            margin-top: 10px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .house-members li {
+            padding: 5px 0;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, #2E7D32 0%, #000 100%);
+            padding: 20px 10px;
+            height: 100vh;
+            color: #fff;
+            position: fixed;
+            width: 250px;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+
+        .sidebar h4 {
+            color: #fff;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+        }
+
+        .sidebar img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .sidebar .profile-name {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar a {
+            color: #b0bec5;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #424242;
+            color: #fff;
+            padding-left: 5px;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        .sidebar .nav-item {
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <h4>Navigation</h4>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/complain/index.html" class="nav-item">
+            <i class="fas fa-tachometer-alt"></i>Complain
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/event/index.html" class="nav-item">
+            <i class="fas fa-users"></i>Event
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/fund/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Fund
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/house/index.html" class="nav-item">
+            <i class="fas fa-file-alt"></i>House
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/land/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Land
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/person/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Person
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/registor/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Registor
+        </a>
+    </div>
+
+    <div class="container mt-4">
+        <h3 class="mb-4">Person Profile</h3>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title" id="person-name"></h5>
+                <p><strong>ID:</strong> <span id="person-id"></span></p>
+                <p><strong>Occupation:</strong> <span id="person-occupation"></span></p>
+                <p><strong>Date of Birth:</strong> <span id="person-dob"></span></p>
+                <p><strong>Phone Number:</strong> <span id="person-phoneNumber"></span></p>
+                <p><strong>Age:</strong> <span id="person-age"></span></p>
+                <p><strong>House:</strong> <span id="person-house"></span></p>
+                <p><strong>Income:</strong> $<span id="person-income"></span></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body" id="house-details">
+                <!-- House details will be inserted here -->
+            </div>
+        </div>
+
+        <div id="map"></div>
+
+        <div class="lands-table">
+            <h4>Lands</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Size</th>
+                        <th>Land Type</th>
+                        <th>Ownership</th>
+                    </tr>
+                </thead>
+                <tbody id="lands-table-body">
+                    <!-- Lands will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="complaints-table">
+            <h4>Complaints</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Complaint</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="complaints-table-body">
+                    <!-- Complaints will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="funds-table">
+            <h4>Fund Details</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="funds-table-body">
+                    <!-- Fund details will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const personId = urlParams.get('id');
+        const apiUrl = `http://localhost:8080/api/person/${personId}`;
+
+        let map;
+        let highlightedPolygon = null;
+        let bounds;
+
+        function calculateAge(dob) {
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            return age;
+        }
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: { lat: 0.0, lng: 0.0 } // Default to valid coordinates
+            });
+
+            bounds = new google.maps.LatLngBounds();
+            fetchLands();  // Initialize lands
+        }
+
+        function fetchPersonDetails() {
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(person => {
+                    document.getElementById('person-id').textContent = person.id;
+                    document.getElementById('person-name').textContent = person.name;
+                    document.getElementById('person-occupation').textContent = person.occupation;
+                    document.getElementById('person-dob').textContent = person.dob;
+                    document.getElementById('person-phoneNumber').textContent = person.phoneNumber;
+                    document.getElementById('person-age').textContent = calculateAge(person.dob);
+                    document.getElementById('person-house').textContent = person.house;
+                    document.getElementById('person-income').textContent = person.income;
+
+                    return fetch(`http://localhost:8080/api/house/${person.house}`);
+                })
+                .then(response => response.json())
+                .then(house => {
+                    const houseDetails = `
+                        <h5 class="card-title">${house.name}</h5>
+                        <p><strong>Village Area:</strong> ${house.villageArea}</p>
+                        <p><strong>House Holder:</strong> ${house.houseHolder}</p>
+                        <p><strong>Members:</strong></p>
+                        <ul class="house-members">
+                            ${house.members.map(member => `<li>${member}</li>`).join('')}
+                        </ul>
+                    `;
+                    document.getElementById('house-details').innerHTML = houseDetails;
+                })
+                .catch(error => console.error('Error fetching person details:', error));
+        }
+        function fetchLands() {
+            fetch(`${apiUrl}/lands`)
+                .then(response => response.json())
+                .then(lands => {
+                    const tableBody = document.getElementById('lands-table-body');
+                    tableBody.innerHTML = '';
+
+                    lands.forEach(land => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${land.id}</td>
+                            <td>${land.size}</td>
+                            <td>${land.landType}</td>
+                            <td>${land.ownership}</td>
+                        `;
+                        tableBody.appendChild(row);
+
+                        // Add markers to the map
+                        const coordinates = land.coordinates; // Assume this is an array of lat/lng pairs
+                        const polygonCoords = coordinates.map(coord => ({ lat: coord.latitude, lng: coord.longitude }));
+
+                        const polygon = new google.maps.Polygon({
+                            paths: polygonCoords,
+                            strokeColor: '#FF0000',
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: '#FF0000',
+                            fillOpacity: 0.35
+                        });
+
+                        polygon.setMap(map);
+
+                        bounds.extend(new google.maps.LatLng(polygonCoords[0].lat, polygonCoords[0].lng));
+                        if (!highlightedPolygon) {
+                            highlightedPolygon = polygon;
+                        }
+
+                        google.maps.event.addListener(polygon, 'click', () => {
+                            if (highlightedPolygon) {
+                                highlightedPolygon.setMap(null);
+                            }
+                            highlightedPolygon = polygon;
+                            polygon.setMap(map);
+                            map.setCenter(polygon.getBounds().getCenter());
+                            map.fitBounds(bounds);
+                        });
+                    });
+
+                    if (lands.length > 0) {
+                        map.fitBounds(bounds);
+                    }
+                })
+                .catch(error => console.error('Error fetching lands:', error));
+        }
+
+        function fetchComplaints() {
+            fetch(`${apiUrl}/complaints`)
+                .then(response => response.json())
+                .then(complaints => {
+                    const tableBody = document.getElementById('complaints-table-body');
+                    tableBody.innerHTML = '';
+
+                    complaints.forEach(complaint => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${complaint.id}</td>
+                            <td>${complaint.complain}</td>
+                            <td>${new Date(complaint.time).toLocaleString()}</td>
+                            <td>${complaint.status}</td>
+                            <td>${complaint.notes}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching complaints:', error));
+        }
+
+        function fetchFunds() {
+            fetch(`${apiUrl}/funds`)
+                .then(response => response.json())
+                .then(funds => {
+                    const tableBody = document.getElementById('funds-table-body');
+                    tableBody.innerHTML = '';
+
+                    funds.forEach(fund => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${fund.id}</td>
+                            <td>${fund.amount}</td>
+                            <td>${new Date(fund.date).toLocaleDateString()}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching funds:', error));
+        }
+
+        // Fetching all necessary data when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchPersonDetails();
+            fetchComplaints();
+            fetchFunds();
+        });
+    </script>
+
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

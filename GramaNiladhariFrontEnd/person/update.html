@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Person</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .dashboard-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .form-group label {
+            font-weight: 600;
+        }
+
+        .form-control {
+            height: 45px;
+            border-radius: 8px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+
+        .success {
+            color: green;
+            font-size: 0.9em;
+        }
+
+        .sidebar {
+    background: linear-gradient(135deg, #2E7D32 0%, #000 100%); /* Dark green to black gradient */
+    padding: 20px 10px 20px 10px;
+    height: 100vh;
+    color: #fff;
+    position: fixed;
+    width: 250px;
+    top: 0;
+    left: 0;
+    overflow: hidden; /* Hide extra content */
+}
+
+.sidebar h4 {
+    color: #fff;
+    margin-bottom: 30px;
+    font-size: 1.2rem;
+}
+
+.sidebar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sidebar .profile-name {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.sidebar a {
+    color: #b0bec5;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #424242; /* Darker hover effect */
+    color: #fff; /* White on hover */
+    padding-left: 5px;
+}
+
+.sidebar a i {
+    margin-right: 10px;
+}
+
+.sidebar .nav-item {
+    padding: 10px 0;
+}
+
+
+        /* Adjustments for mobile responsiveness */
+        @media (max-width: 767px) {
+            .dashboard-card {
+                padding: 15px;
+                margin-top: 10px;
+            }
+
+            .form-row {
+                margin-bottom: 10px;
+            }
+
+            .form-row .col {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+     <!-- Left Sidebar -->
+     <div class="sidebar">
+        <h4>Navigation</h4>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/complain/index.html" class="nav-item">
+            <i class="fas fa-tachometer-alt"></i>Complain
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/event/index.html" class="nav-item">
+            <i class="fas fa-users"></i>Event
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/fund/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Fund
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/house/index.html" class="nav-item">
+            <i class="fas fa-file-alt"></i>House
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/land/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Land
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/person/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Person
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/registor/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Registor
+        </a>
+    </div>
+
+<div class="container mt-5">
+    <div class="dashboard-card">
+        <h2>Update Person</h2>
+        <form id="personForm">
+            <!-- ID Field (Read-Only) -->
+            <div class="form-group">
+                <label for="id">ID (Sri Lankan NIC)</label>
+                <input type="text" class="form-control" id="id" name="id" readonly>
+            </div>
+
+            <!-- Name Field -->
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+
+            <!-- Occupation Field -->
+            <div class="form-group">
+                <label for="occupation">Occupation</label>
+                <input type="text" class="form-control" id="occupation" name="occupation">
+            </div>
+
+            <!-- Date of Birth Field -->
+            <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <input type="date" class="form-control" id="dob" name="dob" required>
+            </div>
+
+            <!-- Phone Number Field -->
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number (Sri Lanka)</label>
+                <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" required pattern="^(\+94|0)?7\d{8}$" placeholder="Enter valid Sri Lankan phone number">
+                <small id="phoneHelp" class="form-text text-muted">Valid formats: +947XXXXXXXX or 07XXXXXXXX.</small>
+                <div class="error" id="phoneError"></div>
+            </div>
+
+            <!-- Gender Selection -->
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select class="form-control" id="gender" name="gender" required>
+                    <option value="MALE">Male</option>
+                    <option value="FEMALE">Female</option>
+                    <option value="OTHER">Other</option>
+                </select>
+            </div>
+
+            <!-- Behavior Field -->
+            <div class="form-group">
+                <label for="behavior">Behavior</label>
+                <input type="text" class="form-control" id="behavior" name="behavior">
+            </div>
+
+            <!-- Health Field -->
+            <div class="form-group">
+                <label for="health">Health</label>
+                <input type="text" class="form-control" id="health" name="health">
+            </div>
+
+            <!-- House Field -->
+            <div class="form-group">
+              <label for="house">House</label>
+              <input type="text" class="form-control" id="house" name="house">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary btn-block">Update</button>
+        </form>
+    </div>
+</div>
+
+<script>
+// Extract ID from URL parameters
+function getPersonIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id');  // Get the 'id' parameter from the URL
+}
+
+// Fetch and populate person data
+async function fetchPersonData(personId) {
+    try {
+        const response = await fetch(`http://localhost:8080/api/person/${personId}`);
+        if (!response.ok) {
+            alert('Failed to fetch person data');
+            return;
+        }
+        const person = await response.json();
+
+        console.log(person)
+
+        // Populate form fields with person data
+        document.getElementById('id').value = person.id;
+        document.getElementById('name').value = person.name;
+        document.getElementById('occupation').value = person.occupation;
+        document.getElementById('dob').value = person.dob;
+        document.getElementById('phoneNumber').value = person.phoneNumber;
+        document.getElementById('gender').value = person.gender;
+        document.getElementById('behavior').value = person.behavior;
+        document.getElementById('health').value = person.health;
+        document.getElementById('house').value = person.house;
+
+    } catch (error) {
+        console.error('Error fetching person data:', error);
+        alert('An error occurred while fetching person data.');
+    }
+}
+
+// Submit form and update person data
+document.getElementById('personForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const personId = document.getElementById('id').value;
+    const formData = {
+        id: document.getElementById('id').value,
+        name: document.getElementById('name').value,
+        occupation: document.getElementById('occupation').value,
+        dob: document.getElementById('dob').value,
+        phoneNumber: document.getElementById('phoneNumber').value,
+        gender: document.getElementById('gender').value,
+        behavior: document.getElementById('behavior').value,
+        health: document.getElementById('health').value,
+        house: document.getElementById('house').value
+    };
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/person/${personId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+        console.log(response)
+        if (response.ok) {
+            alert('Person updated successfully!');
+            // window.location.href = '/';  // Redirect to another page after update
+        } else {
+            alert('Failed to update person. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error updating person:', error);
+        alert('An error occurred while updating person data.');
+    }
+});
+
+// Initialize form with person data
+document.addEventListener('DOMContentLoaded', function() {
+    const personId = getPersonIdFromUrl();
+    if (personId) {
+        fetchPersonData(personId);  // Fetch and populate form if ID exists
+    } else {
+        alert('No person ID provided in URL');
+    }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Map and Details</title>
+
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAA-IKOUxj5n6YYuxeCSiRvgXbekhy0PQ0&libraries=drawing,geometry&callback=initMap" async defer></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        #map {
+            height: 600px;
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .table thead th {
+            background-color: #343a40;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .table tbody tr.highlight {
+            background-color: #ffff00;
+        }
+
+        .pagination {
+            justify-content: center;
+        }
+
+        .badge {
+            font-size: 90%;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+    background: linear-gradient(135deg, #2E7D32 0%, #000 100%); /* Dark green to black gradient */
+    padding: 20px 10px 20px 10px;
+    height: 100vh;
+    color: #fff;
+    position: fixed;
+    width: 250px;
+    top: 0;
+    left: 0;
+    overflow: hidden; /* Hide extra content */
+}
+
+.sidebar h4 {
+    color: #fff;
+    margin-bottom: 30px;
+    font-size: 1.2rem;
+}
+
+.sidebar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sidebar .profile-name {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.sidebar a {
+    color: #b0bec5;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #424242; /* Darker hover effect */
+    color: #fff; /* White on hover */
+    padding-left: 5px;
+}
+
+.sidebar a i {
+    margin-right: 10px;
+}
+
+.sidebar .nav-item {
+    padding: 10px 0;
+}
+
+
+/* Adjust main content to accommodate the sidebar */
+.container-fluid {
+    padding: 20px 20px 20px 235px;
+}
+
+.action-icons i {
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 18px;
+        }
+
+        .action-icons .fa-eye {
+            color: seagreen;
+        }
+
+        .action-icons .fa-pen {
+            color: dodgerblue;
+        }
+
+        .action-icons .fa-trash {
+            color: red;
+        }
+
+        .pagination {
+            justify-content: flex-end;
+        }
+
+        .fas.fa-sort,
+        .fas.fa-sort-up,
+        .fas.fa-sort-down {
+            margin-left: 8px;
+            font-size: 12px;
+        }
+
+
+        @media (max-width: 768px) {
+            #map-container {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+         <!-- Left Sidebar -->
+    <div class="sidebar">
+        <h4>Navigation</h4>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/complain/index.html" class="nav-item">
+            <i class="fas fa-tachometer-alt"></i>Complain
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/event/index.html" class="nav-item">
+            <i class="fas fa-users"></i>Event
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/fund/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Fund
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/house/index.html" class="nav-item">
+            <i class="fas fa-file-alt"></i>House
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/land/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Land
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/person/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Person
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/registor/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Registor
+        </a>
+    </div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8 col-md-12">
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>House Details</h3>
+                        <button class="btn btn-primary" onclick="window.location.href='D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/house/create.html'">Create House</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="search">Search Houses:</label>
+                        <input type="text" id="search" class="form-control"
+                            placeholder="Search by name, village area, or house holder..." onkeyup="searchHouses()">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pageSize">Items per page:</label>
+                        <select id="pageSize" class="form-control" onchange="changePageSize()">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Village Area</th>
+                                    <th>House Holder</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="house-table-body">
+                                <!-- House rows will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <!-- Pagination will be dynamically generated -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12" id="map-container">
+                <h3 class="mb-4">House Map</h3>
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let houses = [];
+        let map;
+        let markers = [];
+        let currentPage = 1;
+        let pageSize = 10;
+
+        async function fetchHouses() {
+            try {
+                const response = await fetch('http://localhost:8080/api/house'); // Endpoint to fetch house data
+                houses = await response.json();
+                renderTable();
+                renderMap();
+            } catch (error) {
+                console.error('Error fetching houses:', error);
+            }
+        }
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 7.8731, lng: 80.7718 }, // Sri Lanka's coordinates for default map center
+                zoom: 8,
+            });
+
+            fetchHouses();
+        }
+
+        function renderMap() {
+            // Clear existing markers
+            markers.forEach(marker => marker.setMap(null));
+            markers = [];
+
+            houses.forEach(house => {
+                const marker = new google.maps.Marker({
+                    position: { lat: house.latitude, lng: house.longitude },
+                    map: map,
+                    title: house.name,
+                });
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<strong>${house.name}</strong><br>
+                              Village Area: ${house.villageArea}<br>
+                              House Holder: ${house.houseHolder}`,
+                });
+
+                marker.addListener('click', () => {
+                    infoWindow.open(map, marker);
+                });
+
+                markers.push(marker);
+            });
+        }
+
+        function renderTable() {
+            const tableBody = document.getElementById('house-table-body');
+            tableBody.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+            const paginatedHouses = houses.slice(startIndex, endIndex);
+
+            paginatedHouses.forEach(house => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${house.id}</td>
+                    <td>${house.name}</td>
+                    <td>${house.villageArea}</td>
+                    <td><a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/person/view.html?id=${house.houseHolder}">${house.houseHolder}</a></td>
+                    <td class="action-icons">
+                        <i class="fas fa-eye" onclick='viewHouse("${house.id}")'></i>
+                        <i class="fas fa-pen" onclick='editHouse("${house.id}")'></i>
+                        <i class="fas fa-trash" onclick='deleteHouse("${house.id}")'></i>
+                    </td>
+                `;
+
+                row.addEventListener('mouseenter', () => {
+                    highlightHouseOnMap(house);
+                });
+
+                row.addEventListener('mouseleave', () => {
+                    clearHouseHighlight();
+                });
+
+                tableBody.appendChild(row);
+            });
+
+            renderPagination();
+        }
+
+        function highlightHouseOnMap(house) {
+            const position = { lat: house.latitude, lng: house.longitude };
+            map.setCenter(position);
+            map.setZoom(15);
+
+            // Highlight the house marker
+            markers.forEach(marker => {
+                if (marker.position.lat() === position.lat && marker.position.lng() === position.lng) {
+                    marker.setAnimation(google.maps.Animation.DROP);
+                }
+            });
+        }
+
+        function clearHouseHighlight() {
+            markers.forEach(marker => {
+                marker.setAnimation(null);
+            });
+        }
+
+        function viewHouse(id) {
+        window.location.href = `view.html?id=${id}`;
+    }
+
+    function editHouse(id) {
+        window.location.href = `update.html?id=${id}`;
+    }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(houses.length / pageSize);
+            const pagination = document.querySelector('.pagination');
+            pagination.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.classList.add('page-item');
+                li.innerHTML = `<a class="page-link" href="#" onclick="goToPage(${i})">${i}</a>`;
+                if (i === currentPage) li.classList.add('active');
+                pagination.appendChild(li);
+            }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderTable();
+        }
+
+        function changePageSize() {
+            pageSize = parseInt(document.getElementById('pageSize').value, 10);
+            renderTable();
+        }
+
+        function showHouseOnMap(lat, lng) {
+            const position = { lat: parseFloat(lat), lng: parseFloat(lng) };
+            map.setCenter(position);
+            map.setZoom(15);
+
+            // Highlight the house marker
+            markers.forEach(marker => {
+                if (marker.position.lat() === position.lat && marker.position.lng() === position.lng) {
+                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                    setTimeout(() => marker.setAnimation(null), 2000);
+                }
+            });
+        }
+
+        function searchHouses() {
+            const query = document.getElementById('search').value.toLowerCase();
+            houses = houses.filter(house =>
+                house.name.toLowerCase().includes(query) ||
+                house.villageArea.toLowerCase().includes(query) ||
+                house.houseHolder.toLowerCase().includes(query)
+            );
+            renderTable();
+        }
+    </script>
+</body>
+
+</html>

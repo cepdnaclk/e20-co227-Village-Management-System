@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update House</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAA-IKOUxj5n6YYuxeCSiRvgXbekhy0PQ0&libraries=drawing,geometry&callback=initMap" async defer></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .dashboard-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .form-group label {
+            font-weight: 600;
+        }
+
+        .form-control {
+            height: 45px;
+            border-radius: 8px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* Custom styles for input field showing both name and ID */
+        #houseHolder.formatted {
+            white-space: pre-line;
+            line-height: 1.2;
+        }
+
+        /* Custom layout for the form */
+        .form-row {
+            margin-bottom: 15px;
+        }
+
+        .form-row .col {
+            padding: 0 15px;
+        }
+
+        /* Autocomplete styles */
+        .autocomplete-container {
+            position: absolute;
+            z-index: 999;
+            background-color: white;
+            width: 500px; /* Make autocomplete container full width */
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            border: 1px solid #ddd;
+        }
+
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .autocomplete-item.new-person {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .autocomplete-item.new-person:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Toast Styles */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1050;
+        }
+
+        /* Map styling */
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        /* Members container styles */
+        .members-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            background-color: #e9ecef;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .member-item .remove-member {
+            cursor: pointer;
+            margin-left: 0.5rem;
+            color: #dc3545;
+        }
+
+        .member-item .remove-member:hover {
+            color: #c82333;
+        }
+
+        .sidebar {
+    background: linear-gradient(135deg, #2E7D32 0%, #000 100%); /* Dark green to black gradient */
+    padding: 20px 10px 20px 10px;
+    height: 100vh;
+    color: #fff;
+    position: fixed;
+    width: 250px;
+    top: 0;
+    left: 0;
+    overflow: hidden; /* Hide extra content */
+}
+
+.sidebar h4 {
+    color: #fff;
+    margin-bottom: 30px;
+    font-size: 1.2rem;
+}
+
+.sidebar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sidebar .profile-name {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.sidebar a {
+    color: #b0bec5;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #424242; /* Darker hover effect */
+    color: #fff; /* White on hover */
+    padding-left: 5px;
+}
+
+.sidebar a i {
+    margin-right: 10px;
+}
+
+.sidebar .nav-item {
+    padding: 10px 0;
+}
+
+
+        /* Mobile responsiveness */
+        @media (max-width: 767px) {
+            .dashboard-card {
+                padding: 15px;
+                margin-top: 10px;
+            }
+
+            .form-row {
+                margin-bottom: 10px;
+            }
+
+            .form-row .col {
+                padding: 0;
+            }
+
+            .autocomplete-container {
+                width: 100%;
+            }
+
+            #map {
+                height: 300px; /* Adjust map height for mobile */
+            }
+
+            .members-container {
+                flex-direction: column;
+            }
+
+            .member-item {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 0.25rem;
+            }
+
+            .member-item .remove-member {
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <h4>Navigation</h4>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/complain/index.html" class="nav-item">
+            <i class="fas fa-tachometer-alt"></i>Complain
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/event/index.html" class="nav-item">
+            <i class="fas fa-users"></i>Event
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/fund/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Fund
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/house/index.html" class="nav-item">
+            <i class="fas fa-file-alt"></i>House
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/land/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Land
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/person/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Person
+        </a>
+        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/registor/index.html" class="nav-item">
+            <i class="fas fa-cog"></i>Registor
+        </a>
+    </div>
+
+<div class="container mt-5">
+    <div class="dashboard-card">
+        <h2>Update House</h2>
+        <form id="houseForm" method="post">
+            <div class="form-row">
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label for="id">House Number</label>
+                        <input type="text" class="form-control" id="id" name="id" placeholder="Enter House Number" disabled>
+                        <!-- <div class="valid-feedback">House ID is available! <span class="text-success">&#10004;</span></div>
+                        <div class="invalid-feedback">This house ID already exists.</div> -->
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label for="houseName">House Name</label>
+                        <input type="text" class="form-control" id="houseName" name="houseName" placeholder="Enter House Name" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="houseHolder">House Holder</label>
+                <input type="text" class="form-control" id="houseHolder" name="houseHolder" placeholder="Start typing a house holder's name..." autocomplete="off" required>
+                <input type="hidden" id="houseHolderId" name="houseHolderId">
+                <div class="autocomplete-container" id="autocompleteContainer"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="membersInput">Members</label>
+                <input type="text" class="form-control" id="membersInput" placeholder="Add members...">
+                <input type="hidden" id="members" name="members">
+                <div class="autocomplete-container" id="membersAutocompleteContainer"></div>
+                <div class="members-container" id="membersContainer"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="villageArea">Village Area</label>
+                <input type="text" class="form-control" id="villageArea" name="villageArea" required>
+            </div>
+
+            <div class="form-group">
+                <label>Select House Location on Map</label>
+                <div id="map"></div>
+            </div>
+
+            <div class="form-row">
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label for="latitude">Latitude</label>
+                        <input type="text" class="form-control" id="latitude" name="latitude" readonly>
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label for="longitude">Longitude</label>
+                        <input type="text" class="form-control" id="longitude" name="longitude" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-block" onclick="submitForm()">Submit</button>
+        </form>
+
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+            <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">House added successfully!</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+            <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">Failed to add house.</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    let map, marker;
+    let selectedPersonId = null;
+    let selectedMembers = [];
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 7.8731, lng: 80.7718 },
+            zoom: 8
+        });
+
+        map.addListener("click", function (event) {
+            placeMarker(event.latLng);
+            document.getElementById("latitude").value = event.latLng.lat();
+            document.getElementById("longitude").value = event.latLng.lng();
+        });
+    }
+
+    function placeMarker(location) {
+        if (marker) {
+            marker.setPosition(location);
+        } else {
+            marker = new google.maps.Marker({
+                position: location,
+                map: map
+            });
+        }
+    }
+
+    // Check house ID availability
+    // document.getElementById('id').addEventListener('input', function () {
+    //     const houseId = this.value;
+    //     checkHouseIdAvailability(houseId);
+    // });
+
+    // function checkHouseIdAvailability(houseId) {
+    //     fetch(`http://localhost:8080/api/house/check-existing/${houseId}`)
+    //         .then(response => response.json())
+    //         .then(isAvailable => {
+    //             const idInput = document.getElementById('id');
+    //             const validFeedback = idInput.nextElementSibling;
+    //             const invalidFeedback = validFeedback.nextElementSibling;
+
+    //             if (!isAvailable) { // House ID is available when response is false
+    //                 idInput.classList.remove('input-error');
+    //                 idInput.classList.add('input-success');
+    //                 validFeedback.style.display = 'block';
+    //                 invalidFeedback.style.display = 'none';
+    //             } else { // House ID already exists
+    //                 idInput.classList.remove('input-success');
+    //                 idInput.classList.add('input-error');
+    //                 validFeedback.style.display = 'none';
+    //                 invalidFeedback.style.display = 'block';
+    //             }
+    //         })
+    //         .catch(error => console.error('Error checking house ID:', error));
+    // }
+
+    // Hide autocomplete when clicking outside
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        if (id) {
+            fetchHouseData(id);
+        }
+    });
+
+    document.addEventListener('click', function(event) {
+        const houseHolderContainer = document.getElementById('autocompleteContainer');
+        const membersContainer = document.getElementById('membersAutocompleteContainer');
+        if (!houseHolderContainer.contains(event.target) && event.target.id !== 'houseHolder') {
+            houseHolderContainer.style.display = 'none';
+        }
+        if (!membersContainer.contains(event.target) && event.target.id !== 'membersInput') {
+            membersContainer.style.display = 'none';
+        }
+    });
+
+    document.getElementById('houseHolder').addEventListener('input', function () {
+        const keyword = this.value;
+        if (keyword.length > 0) {
+            searchPersons(keyword, 'houseHolder');
+        } else {
+            clearAutocomplete('houseHolder');
+        }
+    });
+
+    document.getElementById('houseHolder').addEventListener('focus', function () {
+        if (this.value.length === 0) {
+            searchPersons('', 'houseHolder'); // Show initial list
+        }
+    });
+
+    document.getElementById('membersInput').addEventListener('input', function () {
+        const keyword = this.value;
+        if (keyword.length > 0) {
+            searchPersons(keyword, 'members');
+        } else {
+            clearAutocomplete('members');
+        }
+    });
+
+    document.getElementById('membersInput').addEventListener('focus', function () {
+        if (this.value.length === 0) {
+            searchPersons('', 'members'); // Show initial list
+        }
+    });
+
+    function searchPersons(keyword, type) {
+        fetch(`http://localhost:8080/api/person/search?keyword=${keyword}`)
+            .then(response => response.json())
+            .then(data => {
+                showAutocompleteSuggestions(data, type);
+            })
+            .catch(error => console.error('Error fetching autocomplete data:', error));
+    }
+
+    function showAutocompleteSuggestions(data, type) {
+        const container = type === 'houseHolder' ? document.getElementById('autocompleteContainer') : document.getElementById('membersAutocompleteContainer');
+        container.innerHTML = '';
+
+        // Add "Create Person" option
+        if (type === 'members') {
+            const newPersonItem = document.createElement('div');
+            newPersonItem.className = 'autocomplete-item new-person';
+            newPersonItem.innerHTML = 'Create Person <i class="fas fa-plus"></i>';
+            newPersonItem.addEventListener('click', () => {
+                clearAutocomplete(type);
+                document.getElementById(type === 'houseHolder' ? 'houseHolder' : 'membersInput').value = 'Create Person';
+                if (type === 'houseHolder') {
+                    selectedPersonId = null;
+                    document.getElementById('houseHolderId').value = ''; // Clear hidden input
+                }
+            });
+            container.appendChild(newPersonItem);
+        }
+
+        // Append other search results
+        data.forEach(person => {
+            const item = document.createElement('div');
+            item.className = 'autocomplete-item';
+            item.innerHTML = `${person.name} - <small>${person.id}</small>`; // Show name and ID separated by dash
+            item.addEventListener('click', () => {
+                if (type === 'houseHolder') {
+                    const houseHolderInput = document.getElementById('houseHolder');
+                    houseHolderInput.value = `${person.name} - ${person.id}`; // Format name and ID
+                    houseHolderInput.classList.add('formatted'); // Apply custom formatting
+                    selectedPersonId = person.id; // Store the ID in the variable
+                    document.getElementById('houseHolderId').value = selectedPersonId; // Set hidden input value with the person's ID
+                } else {
+                    addMember(person);
+                }
+                clearAutocomplete(type);
+            });
+            container.appendChild(item);
+        });
+
+        if (data.length > 0) {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    }
+
+    function clearAutocomplete(type) {
+        const container = type === 'houseHolder' ? document.getElementById('autocompleteContainer') : document.getElementById('membersAutocompleteContainer');
+        container.style.display = 'none';
+    }
+
+    function addMember(person) {
+        if (!selectedMembers.includes(person.id)) {
+            selectedMembers.push(person.id);
+            const memberContainer = document.getElementById('membersContainer');
+            const memberItem = document.createElement('div');
+            memberItem.className = 'member-item';
+            memberItem.innerHTML = `${person.name} - ${person.id} <span class="remove-member" onclick="removeMember('${person.id}')"><i class="fas fa-times"></i></span>`;
+            memberContainer.appendChild(memberItem);
+
+            // Update hidden input with selected members
+            document.getElementById('members').value = selectedMembers.join(',');
+        }
+    }
+
+    function removeMember(personId) {
+        selectedMembers = selectedMembers.filter(id => id !== personId);
+        document.getElementById('members').value = selectedMembers.join(',');
+
+        const memberContainer = document.getElementById('membersContainer');
+        const memberItem = [...memberContainer.getElementsByClassName('member-item')].find(item => item.innerHTML.includes(personId));
+        if (memberItem) {
+            memberContainer.removeChild(memberItem);
+        }
+    }
+
+    async function getPerson(id) {
+        const response = await fetch(`http://localhost:8080/api/person/${id}`);
+        const data = await response.json();
+        return data;
+    }
+
+async function fetchHouseData(id) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/house/${id}`);
+    const data = await response.json();
+    console.log(data);
+
+    document.getElementById('id').value = data.id;
+    document.getElementById('houseName').value = data.name;
+    
+    // Fetch the house holder's name and update the field
+    const houseHolder = await getPerson(data.houseHolder);
+    document.getElementById('houseHolder').value = `${houseHolder.name} - ${houseHolder.id}`;
+    document.getElementById('houseHolderId').value = houseHolder.id;
+
+    // Use for...of to iterate through members asynchronously
+    for (const member of data.members) {
+      const response = await fetch(`http://localhost:8080/api/person/${member}`);
+      const personData = await response.json();
+      addMember(personData); // Assuming addMember adds the person to the UI
+    }
+
+    document.getElementById('villageArea').value = data.villageArea;
+    document.getElementById('latitude').value = data.latitude;
+    document.getElementById('longitude').value = data.longitude;
+    
+    // Place marker on the map
+    placeMarker({ lat: parseFloat(data.latitude), lng: parseFloat(data.longitude) });
+  } catch (error) {
+    console.error('Error fetching house data:', error);
+  }
+}
+
+
+
+    function submitForm() {
+        const form = document.getElementById('houseForm');
+        const houseHolderId = document.getElementById('houseHolderId').value;
+
+        if (!houseHolderId) {
+            alert('Please select a person.');
+            return;
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const houseID = urlParams.get('id');
+
+        // Prepare the data to send
+        const data = new FormData(form);
+        const houseDTO = {
+            id: houseID,
+            name: data.get('houseName'),
+            houseHolder: houseHolderId, // Only the ID is passed as houseHolder
+            members: selectedMembers, // Array of selected member IDs
+            villageArea: data.get('villageArea'),
+            latitude: data.get('latitude'),
+            longitude: data.get('longitude')
+        };
+
+        console.log(JSON.stringify(houseDTO))
+
+        fetch(`http://localhost:8080/api/house/${houseDTO.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(houseDTO)
+        })
+        .then(response => {
+            console.log(response)
+            if (response.ok) {
+                console.log("OK")
+                document.getElementById('successToast').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('successToast').style.display = 'none';
+                }, 3000); // Hide success toast after 3 seconds
+            } else {
+                console.log("OK ELSE")
+                document.getElementById('errorToast').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('errorToast').style.display = 'none';
+                }, 3000); // Hide error toast after 3 seconds
+            }
+        })
+        .catch(error => {
+            console.log("CATCH")
+            console.error('Error submitting form:', error);
+            document.getElementById('errorToast').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('errorToast').style.display = 'none';
+            }, 3000); // Hide error toast after 3 seconds
+        });
+    }
+</script>
+
+</body>
+</html>
