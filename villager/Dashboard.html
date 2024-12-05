@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Villager Dashboard</title>
+
+  <!-- Link to Local Bootstrap CSS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+
+  <!-- Google Maps API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAA-IKOUxj5n6YYuxeCSiRvgXbekhy0PQ0&libraries=drawing,geometry&callback=initMap" async defer></script>
+
+  <style>
+    body {
+      background-color: #f4f6f9;
+      font-family: 'Poppins', sans-serif;
+      color: #343a40;
+    }
+
+    /* Navbar Customizations */
+    .navbar {
+      background-color: #007bff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-nav .nav-link {
+      color: white !important;
+      font-size: 1.1rem;
+      font-weight: 500;
+      padding: 0.75rem 1rem;
+      margin-left: 10px;
+      transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    }
+
+    .navbar-nav .nav-link:hover {
+      background-color: #0056b3;
+      color: #ffffff !important;
+      border-radius: 5px;
+    }
+
+    .navbar-nav .home-link {
+      font-weight: 600;
+    }
+
+    .navbar-toggler-icon {
+      background-color: white;
+    }
+
+    /* Buttons */
+    .btn-outline-success {
+      color: white;
+      border-color: white;
+    }
+
+    .btn-outline-success:hover {
+      background-color: white;
+      color: #007bff;
+    }
+
+    /* Dashboard Container */
+    .dashboard-container {
+      padding: 40px 20px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      margin-top: 30px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Card Styles */
+    .card {
+      border: none;
+      background-color: #ffffff;
+      border-radius: 12px;
+      /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-body {
+      padding: 25px;
+      text-align: left;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #007bff;
+      margin-bottom: 15px;
+    }
+
+    .card-text {
+      color: #6c757d;
+      margin-bottom: 20px;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+      padding: 10px 20px;
+      border-radius: 50px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+
+    /* Forms Section */
+    .form-label {
+      font-weight: 500;
+      color: #495057;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    /* Section-specific Styles */
+    .complaint-section,
+    .funding-section,
+    .certificate-section,
+    .villager-details {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 30px;
+      margin-top: 40px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Villager Details Section */
+    #villager-details-section {
+      display: none;
+    }
+
+    .villager-details img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+
+    /* Map Styles */
+    #map {
+      height: 400px;
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Tables */
+    .table {
+      margin-top: 20px;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+
+    .table th {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+    }
+
+    .table tbody tr {
+      background-color: white;
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      transition: background-color 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+      background-color: #f1f1f1;
+      cursor: pointer;
+    }
+
+    /* Section Headers */
+    h3 {
+      color: #343a40;
+      font-weight: 600;
+      margin-bottom: 25px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link home-link active" aria-current="page" href="#" onclick="showHomePage()">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="showComplaintForm()">Complaints</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="showFundingForm()">Funding Requests</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="showCertificateForm()">Request Certificates</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              onclick="showVillagerDetails('John Doe', 'Village A', 'Farmer', 35, 4, 'Married', 'Some additional info about John Doe.', 'https://via.placeholder.com/150')">View
+              Villager Details</a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <button class="btn btn-outline-success" type="button"
+            onclick="window.location.href='login.html';">Logout</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Content -->
+  <div class="container dashboard-container" id="home-section">
+    <h1>Welcome to the Villager Dashboard</h1>
+    <p>Use the navigation bar to access different sections of the dashboard.</p>
+  </div>
+
+  <div class="container dashboard-container">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Submit a Complaint</h5>
+            <p class="card-text">Submit complaints about any village issues directly to the Grama Niladhari.</p>
+            <a href="#" class="btn btn-primary" onclick="showComplaintForm()">Submit Complaint</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Request Funding</h5>
+            <p class="card-text">Submit a request for village development funding, personal loans, or other financial
+              assistance.</p>
+            <a href="#" class="btn btn-primary" onclick="showFundingForm()">Request Funding</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">View Villager Details</h5>
+            <p class="card-text">Click the button below to view detailed information about a villager.</p>
+            <a href="#" class="btn btn-primary"
+              onclick="showVillagerDetails('John Doe', 'Village A', 'Farmer', 35, 4, 'Married', 'Some additional info about John Doe.', 'https://via.placeholder.com/150')">View
+              Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Request Certificates</h5>
+            <p class="card-text">Request certificates for various purposes such as residence proof, birth certificates,
+              etc.</p>
+            <a href="#" class="btn btn-primary" onclick="showCertificateForm()">Request Certificate</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Complaint Form Section -->
+    <div id="complaint-section" class="complaint-section">
+      <h3>Submit a Compalin</h3>
+      <form id="complaintForm" onsubmit="return handleComplaintSubmit(event)">
+        <div class="mb-3">
+          <label for="description" class="form-label">Complain Description</label>
+          <textarea class="form-control" id="description" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Complain</button>
+      </form>
+    </div>
+
+    <!-- Funding Form Section -->
+    <div id="funding-section" class="funding-section">
+      <h3>Request Funding</h3>
+      <div id="fundingSuccessMessage" class="alert alert-success d-none" role="alert">
+        Your funding request has been successfully submitted!
+      </div>
+      <form id="fundingForm" onsubmit="return handleFundingSubmit(event)">
+        <div class="mb-3">
+          <label for="fundingFullName" class="form-label">Full Name</label>
+          <input type="text" class="form-control" id="fundingFullName" required>
+        </div>
+        <div class="mb-3">
+          <label for="fundingAmount" class="form-label">Funding Amount</label>
+          <input type="number" class="form-control" id="fundingAmount" required>
+        </div>
+        <div class="mb-3">
+          <label for="fundingReason" class="form-label">Reason for Funding</label>
+          <textarea class="form-control" id="fundingReason" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Request Funding</button>
+      </form>
+    </div>
+
+    <!-- Certificate Request Section -->
+    <div id="certificate-section" class="certificate-section">
+      <h3>Request a Certificate</h3>
+      <div id="certificateSuccessMessage" class="alert alert-success d-none" role="alert">
+        Your certificate request has been successfully submitted!
+      </div>
+      <form id="certificateForm" onsubmit="return handleCertificateRequest(event)">
+        <div class="mb-3">
+          <label for="certificateFullName" class="form-label">Full Name</label>
+          <input type="text" class="form-control" id="certificateFullName" required>
+        </div>
+        <div class="mb-3">
+          <label for="certificateType" class="form-label">Certificate Type</label>
+          <select class="form-select" id="certificateType" required>
+            <option selected disabled>Select certificate type</option>
+            <option value="Charitha Sahathikaya">Charitha Sahathikaya</option>
+            <option value="Adayam Warthawa">Adayam Warthawa</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="certificateDescription" class="form-label">Description (optional)</label>
+          <textarea class="form-control" id="certificateDescription" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Request Certificate</button>
+      </form>
+    </div>
+
+    <!-- Villager Details Section -->
+    <div id="villager-details-section" class="villager-details"></div>
+    <div class="container mt-4">
+      <h3 class="mb-4">Person Profile</h3>
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title" id="person-name"></h5>
+          <p><strong>ID:</strong> <span id="person-id"></span></p>
+          <p><strong>Occupation:</strong> <span id="person-occupation"></span></p>
+          <p><strong>Date of Birth:</strong> <span id="person-dob"></span></p>
+          <p><strong>Phone Number:</strong> <span id="person-phoneNumber"></span></p>
+          <p><strong>Age:</strong> <span id="person-age"></span></p>
+          <p><strong>House:</strong> <span id="person-house"></span></p>
+          <p><strong>Income:</strong> $<span id="person-income"></span></p>
+        </div>
+      </div>
+    </div>
+
+    <br />
+
+    <div class="card">
+      <div class="card-body" id="house-details">
+        <!-- House details will be inserted here -->
+      </div>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="lands-table">
+      <h4>Lands</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Size</th>
+            <th>Land Type</th>
+            <th>Ownership</th>
+          </tr>
+        </thead>
+        <tbody id="lands-table-body">
+          <!-- Lands will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="complaints-table">
+      <h4>Complaints</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Complain</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="complaints-table-body">
+          <!-- Complaints will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- Link to Local Bootstrap JS -->
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Function to show the home page (dashboard)
+    function showHomePage() {
+      hideAllSections();
+      let dashboardRows = document.querySelectorAll('.dashboard-container .row');
+      dashboardRows.forEach(row => row.style.display = 'flex'); // Show all dashboard rows
+    }
+
+    // Function to handle showing the complaint form
+    function showComplaintForm() {
+      hideAllSections();
+      document.getElementById('complaint-section').style.display = 'block'; // Show the complaint section
+    }
+
+    // Function to handle showing the funding form
+    function showFundingForm() {
+      hideAllSections();
+      document.getElementById('funding-section').style.display = 'block'; // Show the funding section
+    }
+
+    // Function to show the certificate form
+    function showCertificateForm() {
+      hideAllSections();
+      document.getElementById('certificate-section').style.display = 'block'; // Show the certificate section
+    }
+
+    // Function to show villager details
+    function showVillagerDetails(fullName, village, role, age, family, maritalStatus, additionalInfo, image) {
+      hideAllSections();
+      document.getElementById('villager-fullname').textContent = fullName; // Corrected ID
+      document.getElementById('villager-village').textContent = village; // Corrected ID
+      document.getElementById('villager-role').textContent = role; // Corrected ID
+      document.getElementById('villager-age').textContent = age; // Corrected ID
+      document.getElementById('villager-family').textContent = family; // Corrected ID
+      document.getElementById('villager-marital-status').textContent = maritalStatus; // Corrected ID
+      document.getElementById('villager-additional-info').textContent = additionalInfo; // Corrected ID
+      document.getElementById('villager-image').src = image; // Correct ID
+      document.getElementById('villager-details-section').style.display = 'block'; // Show villager details
+    }
+
+    // Function to hide all sections
+    function hideAllSections() {
+      document.getElementById('complaint-section').style.display = 'none';
+      document.getElementById('funding-section').style.display = 'none';
+      document.getElementById('certificate-section').style.display = 'none';
+      document.getElementById('villager-details-section').style.display = 'none';
+
+      // Hide all dashboard rows
+      let dashboardRows = document.querySelectorAll('.dashboard-container .row');
+      dashboardRows.forEach(row => row.style.display = 'none');
+    }
+
+    // Handle Complaint Submission
+    function handleComplaintSubmit(event) {
+      event.preventDefault();
+      // Display success message
+      document.getElementById('successMessage').classList.remove('d-none');
+      // Optionally, reset the form
+      document.getElementById('complaintForm').reset();
+      return false; // Prevent default form submission
+    }
+
+    // Handle Funding Submission
+    function handleFundingSubmit(event) {
+      event.preventDefault();
+      // Display success message
+      document.getElementById('fundingSuccessMessage').classList.remove('d-none');
+      // Optionally, reset the form
+      document.getElementById('fundingForm').reset();
+      return false; // Prevent default form submission
+    }
+
+    // Handle Certificate Request Submission
+    function handleCertificateRequest(event) {
+      event.preventDefault();
+      // Display success message
+      document.getElementById('certificateSuccessMessage').classList.remove('d-none');
+      // Optionally, reset the form
+      document.getElementById('certificateForm').reset();
+      return false; // Prevent default form submission
+    }
+
+
+    const urlParams = new URLSearchParams(window.location.search);
+    // const personId = urlParams.get('id');
+    const personId = "200030302987"
+    const apiUrl = `http://localhost:8080/api/person/${personId}`;
+
+    let map;
+    let highlightedPolygon = null;
+    let bounds;
+
+    function calculateAge(dob) {
+      const birthDate = new Date(dob);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
+      return age;
+    }
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 15,
+      center: { lat: 6.9343, lng: 80.7580 }
+    });
+
+
+      bounds = new google.maps.LatLngBounds();
+      fetchLands();  // Initialize lands
+    }
+
+    function fetchPersonDetails() {
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(person => {
+          document.getElementById('person-id').textContent = person.id;
+          document.getElementById('person-name').textContent = person.name;
+          document.getElementById('person-occupation').textContent = person.occupation;
+          document.getElementById('person-dob').textContent = person.dob;
+          document.getElementById('person-phoneNumber').textContent = person.phoneNumber;
+          document.getElementById('person-age').textContent = calculateAge(person.dob);
+          document.getElementById('person-house').textContent = person.house;
+          document.getElementById('person-income').textContent = person.income;
+
+          return fetch(`http://localhost:8080/api/house/${person.house}`);
+        })
+        .then(response => response.json())
+        .then(house => {
+          const houseDetails = `
+                        <h5 class="card-title">${house.name}</h5>
+                        <p><strong>Village Area:</strong> ${house.villageArea}</p>
+                        <p><strong>House Holder:</strong> ${house.houseHolder}</p>
+                        <p><strong>Members:</strong></p>
+                        <ul class="house-members">
+                            ${house.members.map(member => `<li>${member}</li>`).join('')}
+                        </ul>
+                    `;
+          document.getElementById('house-details').innerHTML = houseDetails;
+        })
+        .catch(error => console.error('Error fetching person details:', error));
+    }
+
+    function fetchLands() {
+      fetch(`${apiUrl}/lands`)
+        .then(response => response.json())
+        .then(lands => {
+          const tableBody = document.getElementById('lands-table-body');
+          tableBody.innerHTML = '';
+
+          lands.forEach(land => {
+            const row = document.createElement('tr');
+            row.dataset.coordinates = JSON.stringify(land.coordinates);
+            row.innerHTML = `
+                            <td>${land.id}</td>
+                            <td>${land.size}</td>
+                            <td>${land.landType}</td>
+                            <td>${land.ownership}</td>
+                        `;
+                        console.log(land.coordinates)
+            row.addEventListener('mouseover', () => {
+              const path = land.coordinates.map(coord => ({ lat: coord.latitude, lng: coord.longitude }));
+              if (path.length > 0) {
+                if (highlightedPolygon) {
+                  highlightedPolygon.setMap(null);
+                }
+                console.log(path)
+                highlightedPolygon = new google.maps.Polygon({
+                  paths: path,
+                  strokeColor: '#FF0000',
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                  fillColor: '#FF0000',
+                  fillOpacity: 0.35,
+                  map: map
+                });
+                const bounds = new google.maps.LatLngBounds();
+                path.forEach(coord => bounds.extend(new google.maps.LatLng(coord.lat, coord.lng)));
+                map.fitBounds(bounds);
+              }
+            });
+            tableBody.appendChild(row);
+          });
+        })
+        .catch(error => console.error('Error fetching lands:', error));
+    }
+
+    function fetchComplaints() {
+      fetch(`${apiUrl}/complains`)
+        .then(response => response.json())
+        .then(complaints => {
+          const tableBody = document.getElementById('complaints-table-body');
+          tableBody.innerHTML = '';
+
+          complaints.forEach(complaint => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                            <td>${complaint.id}</td>
+                            <td>${complaint.complain}</td>
+                            <td>${new Date(complaint.time).toLocaleString()}</td>
+                            <td>${complaint.status}</td>
+                            <td>${complaint.notes}</td>
+                        `;
+            tableBody.appendChild(row);
+          });
+        })
+        .catch(error => console.error('Error fetching complaints:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchPersonDetails();
+      fetchComplaints();
+    });
+
+    // Function to handle the complaint form submission
+    async function handleComplaintSubmit(event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      // Get the complain description from the textarea
+      const complainDescription = document.getElementById('description').value;
+
+      // Create a complain data object
+      const complainData = {
+        person: personId,  // Use the constant person ID
+        complain: complainDescription
+      };
+
+      try {
+        console.log(JSON.stringify(complainData))
+        // Send the POST request to the server
+        const response = await fetch('http://localhost:8080/api/complain', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(complainData)
+        });
+
+        // Check if the response is successful
+        if (response.ok) {
+          alert('Complain submitted successfully!');
+          // Optionally, reset the form fields
+          document.getElementById('complaintForm').reset();
+        } else {
+          console.error('Failed to submit complain:', response.statusText);
+          alert('Failed to submit complain. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while submitting the complain.');
+      }
+    }
+  </script>
+
+</body>
+
+</html>

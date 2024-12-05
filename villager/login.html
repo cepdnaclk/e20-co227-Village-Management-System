@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Villager Login</title>
+
+    <!-- Link to Local Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Villager Login</h2>
+    <form id="loginForm">
+        <div class="mb-3">
+            <label for="username" class="form-label">ID Number</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter your ID number" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </form>
+    <div id="errorMessage" class="text-danger text-center mt-3" style="display: none;">
+        Invalid ID or password.
+    </div>
+</div>
+
+<!-- Link to Local Bootstrap JS Bundle -->
+<script src="js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        // Get username and password values from input fields
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            // Make API call to the backend
+            const response = await fetch('http://localhost:8080/api/security/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    personId: username,
+                    password: password
+                })
+            });
+
+            if (response.ok) {
+                // Login successful, redirect to the dashboard
+                window.location.href = "dashboard.html";
+            } else if (response.status === 401) {
+                // Invalid credentials
+                document.getElementById('errorMessage').textContent = 'Invalid username or password.';
+                document.getElementById('errorMessage').style.display = 'block';
+            } else if (response.status === 404) {
+                // User not found
+                document.getElementById('errorMessage').textContent = 'User not found.';
+                document.getElementById('errorMessage').style.display = 'block';
+            } else {
+                // Other errors
+                document.getElementById('errorMessage').textContent = 'An unexpected error occurred.';
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        } catch (error) {
+            // Handle network errors
+            console.error('Error:', error);
+            document.getElementById('errorMessage').textContent = 'Unable to connect to the server.';
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+    });
+</script>
+
+
+</body>
+</html>
