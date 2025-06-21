@@ -522,9 +522,8 @@
             complaints.forEach(complain => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                <td>${highlightText(complain.id ? complain.id.toString() : 'N/A')}</td>
-                <td>${highlightText(complain.person || 'N/A')}</td>
-                <td><a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/person/view.html?id=${complain.person}">${highlightText(complain.personName || 'N/A')}</a></td>
+                <td>${highlightText(complain.id ? complain.id.toString() : 'N/A')}</td>                <td>${highlightText(complain.person || 'N/A')}</td>
+                <td><a href="../person/view.html?id=${complain.person}">${highlightText(complain.personName || 'N/A')}</a></td>
                 <td>${highlightText(complain.complain || 'N/A')}</td>
                 <td>${highlightText(complain.time ? new Date(complain.time).toLocaleString() : 'N/A')}</td>
                 <td>${statusBadge(complain.status)}</td>
