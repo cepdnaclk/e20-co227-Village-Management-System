@@ -1,437 +1,490 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Update Land</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
+      body {
+        background-color: #f8f9fa;
+      }
 
+      .dashboard-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        margin-top: 30px;
+      }
+
+      h2 {
+        font-size: 26px;
+        font-weight: 600;
+        color: #343a40;
+      }
+
+      .form-group label {
+        font-weight: 600;
+      }
+
+      .form-control {
+        height: 45px;
+        border-radius: 8px;
+      }
+
+      .form-control[disabled] {
+        background-color: #e9ecef;
+        opacity: 1;
+      }
+
+      .btn-primary {
+        background-color: #007bff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        margin-top: 15px;
+      }
+
+      .btn-primary:hover {
+        background-color: #0056b3;
+      }
+
+      .map-container {
+        height: 400px;
+        margin-top: 30px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        position: relative;
+      }
+
+      .remove-icon {
+        position: absolute;
+        color: red;
+        font-size: 24px;
+        background-color: white;
+        border-radius: 50%;
+        padding: 5px;
+        cursor: pointer;
+        z-index: 2;
+        display: none;
+      }
+
+      .sidebar {
+        background: linear-gradient(
+          135deg,
+          #2e7d32 0%,
+          #000 100%
+        ); /* Dark green to black gradient */
+        padding: 20px 10px 20px 10px;
+        height: 100vh;
+        color: #fff;
+        position: fixed;
+        width: 250px;
+        top: 0;
+        left: 0;
+        overflow: hidden; /* Hide extra content */
+      }
+
+      .sidebar h4 {
+        color: #fff;
+        margin-bottom: 30px;
+        font-size: 1.2rem;
+      }
+
+      .sidebar img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-bottom: 20px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .sidebar .profile-name {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+      }
+
+      .sidebar a {
+        color: #b0bec5;
+        text-decoration: none;
+        display: block;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      .sidebar a:hover {
+        background-color: #424242; /* Darker hover effect */
+        color: #fff; /* White on hover */
+        padding-left: 5px;
+      }
+
+      .sidebar a i {
+        margin-right: 10px;
+      }
+
+      .sidebar .nav-item {
+        padding: 10px 0;
+      }
+
+      /* Toast container styling */
+      .toast-container {
+        position: fixed;
+        bottom: 20px; /* Adjust this to control distance from bottom */
+        right: 20px; /* Adjust this to control distance from right */
+        z-index: 1050;
+      }
+
+      /* Adjustments for mobile responsiveness */
+      @media (max-width: 767px) {
         .dashboard-card {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 25px;
-            margin-top: 30px;
+          padding: 15px;
+          margin-top: 10px;
         }
 
-        h2 {
-            font-size: 26px;
-            font-weight: 600;
-            color: #343a40;
+        .form-row {
+          margin-bottom: 10px;
         }
 
-        .form-group label {
-            font-weight: 600;
+        .form-row .col {
+          padding: 0;
         }
+      }
 
-        .form-control {
-            height: 45px;
-            border-radius: 8px;
-        }
-
-        .form-control[disabled] {
-            background-color: #e9ecef;
-            opacity: 1;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            margin-top: 15px;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        .map-container {
-            height: 400px;
-            margin-top: 30px;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            position: relative;
-        }
-
-        .remove-icon {
-            position: absolute;
-            color: red;
-            font-size: 24px;
-            background-color: white;
-            border-radius: 50%;
-            padding: 5px;
-            cursor: pointer;
-            z-index: 2;
-            display: none;
-        }
-
-        .sidebar {
-    background: linear-gradient(135deg, #2E7D32 0%, #000 100%); /* Dark green to black gradient */
-    padding: 20px 10px 20px 10px;
-    height: 100vh;
-    color: #fff;
-    position: fixed;
-    width: 250px;
-    top: 0;
-    left: 0;
-    overflow: hidden; /* Hide extra content */
-}
-
-.sidebar h4 {
-    color: #fff;
-    margin-bottom: 30px;
-    font-size: 1.2rem;
-}
-
-.sidebar img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-bottom: 20px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.sidebar .profile-name {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.1rem;
-}
-
-.sidebar a {
-    color: #b0bec5;
-    text-decoration: none;
-    display: block;
-    padding: 10px 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.sidebar a:hover {
-    background-color: #424242; /* Darker hover effect */
-    color: #fff; /* White on hover */
-    padding-left: 5px;
-}
-
-.sidebar a i {
-    margin-right: 10px;
-}
-
-.sidebar .nav-item {
-    padding: 10px 0;
-}
-
-
-        /* Toast container styling */
-.toast-container {
-    position: fixed;
-    bottom: 20px; /* Adjust this to control distance from bottom */
-    right: 20px;  /* Adjust this to control distance from right */
-    z-index: 1050;
-}
-
-
-        /* Adjustments for mobile responsiveness */
-        @media (max-width: 767px) {
-            .dashboard-card {
-                padding: 15px;
-                margin-top: 10px;
-            }
-
-            .form-row {
-                margin-bottom: 10px;
-            }
-
-            .form-row .col {
-                padding: 0;
-            }
-        }
-
-        /* Toast container styling */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1050;
-        }
+      /* Toast container styling */
+      .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <!-- Left Sidebar -->
     <div class="sidebar">
-        <h4>Navigation</h4>
-        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/complain/index.html" class="nav-item">
-            <i class="fas fa-tachometer-alt"></i>Complain
-        </a>
-        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/event/index.html" class="nav-item">
-            <i class="fas fa-users"></i>Event
-        </a>
-        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/fund/index.html" class="nav-item">
-            <i class="fas fa-cog"></i>Fund
-        </a>
-        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/house/index.html" class="nav-item">
-            <i class="fas fa-file-alt"></i>House
-        </a>
-        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/land/index.html" class="nav-item">
-            <i class="fas fa-cog"></i>Land
-        </a>
-        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/person/index.html" class="nav-item">
-            <i class="fas fa-cog"></i>Person
-        </a>
-        <a href="D:/Downloads/GramaNiladhariFrontEnd/GramaNiladhariFrontEnd/components/registor/index.html" class="nav-item">
-            <i class="fas fa-cog"></i>Registor
-        </a>
+      <h4>Navigation</h4>
+      <a href="../complain/index.html" class="nav-item">
+        <i class="fas fa-exclamation-triangle"></i>Complain
+      </a>
+      <a href="../event/index.html" class="nav-item">
+        <i class="fas fa-calendar-alt"></i>Event
+      </a>
+      <a href="../fund/index.html" class="nav-item">
+        <i class="fas fa-money-bill-wave"></i>Fund
+      </a>
+      <a href="../house/index.html" class="nav-item">
+        <i class="fas fa-home"></i>House
+      </a>
+      <a href="index.html" class="nav-item active">
+        <i class="fas fa-map"></i>Land
+      </a>
+      <a href="../person/index.html" class="nav-item">
+        <i class="fas fa-users"></i>Person
+      </a>
+      <a href="../registor/index.html" class="nav-item">
+        <i class="fas fa-user-plus"></i>Register
+      </a>
     </div>
 
-<div class="container mt-5">
-    <div class="dashboard-card">
+    <div class="container mt-5">
+      <div class="dashboard-card">
         <h2 id="form-title">Create Land</h2>
         <form id="landForm">
-            <!-- Owner Field -->
-            <div class="form-group">
-                <label for="owner">Owner</label>
-                <input type="text" class="form-control" id="owner" name="owner" required>
-            </div>
+          <!-- Owner Field -->
+          <div class="form-group">
+            <label for="owner">Owner</label>
+            <input
+              type="text"
+              class="form-control"
+              id="owner"
+              name="owner"
+              required
+            />
+          </div>
 
-            <!-- Land Type Field -->
-            <div class="form-group">
-                <label for="landType">Land Type</label>
-                <input type="text" class="form-control" id="landType" name="landType">
-            </div>
+          <!-- Land Type Field -->
+          <div class="form-group">
+            <label for="landType">Land Type</label>
+            <input
+              type="text"
+              class="form-control"
+              id="landType"
+              name="landType"
+            />
+          </div>
 
-            <!-- Ownership Field -->
-            <div class="form-group">
-                <label for="ownership">Ownership</label>
-                <input type="text" class="form-control" id="ownership" name="ownership">
-            </div>
+          <!-- Ownership Field -->
+          <div class="form-group">
+            <label for="ownership">Ownership</label>
+            <input
+              type="text"
+              class="form-control"
+              id="ownership"
+              name="ownership"
+            />
+          </div>
 
-            <!-- Size Field (Disabled) -->
-            <div class="form-group">
-                <label for="size">Size (in square meters)</label>
-                <input type="number" class="form-control" id="size" name="size" disabled>
-            </div>
+          <!-- Size Field (Disabled) -->
+          <div class="form-group">
+            <label for="size">Size (in square meters)</label>
+            <input
+              type="number"
+              class="form-control"
+              id="size"
+              name="size"
+              disabled
+            />
+          </div>
 
-            <!-- Map Container -->
-            <div class="map-container" id="map"></div>
+          <!-- Map Container -->
+          <div class="map-container" id="map"></div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary btn-block" id="submit-btn">Submit</button>
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            id="submit-btn"
+          >
+            Submit
+          </button>
         </form>
+      </div>
     </div>
-</div>
 
-<!-- Toast Container -->
-<div class="toast-container" id="toast-container"></div>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAA-IKOUxj5n6YYuxeCSiRvgXbekhy0PQ0&libraries=drawing,geometry&callback=initMap" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAA-IKOUxj5n6YYuxeCSiRvgXbekhy0PQ0&libraries=drawing,geometry&callback=initMap"
+      async
+      defer
+    ></script>
 
-<script>
-    let map;
-    let drawingManager;
-    let polygon;
-    let removeIcon;
-    let landId = null;
+    <script>
+      let map;
+      let drawingManager;
+      let polygon;
+      let removeIcon;
+      let landId = null;
 
-    // Get the 'id' parameter from the URL if present
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('id')) {
-        landId = urlParams.get('id');
-        document.getElementById('form-title').textContent = 'Update Land';
-        document.getElementById('submit-btn').textContent = 'Update';
+      // Get the 'id' parameter from the URL if present
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has("id")) {
+        landId = urlParams.get("id");
+        document.getElementById("form-title").textContent = "Update Land";
+        document.getElementById("submit-btn").textContent = "Update";
         fetchLandData(landId);
-    }
+      }
 
-    function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: 6.9271, lng: 79.9612 }, // Default center: Colombo, Sri Lanka
-            zoom: 12
+      function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 6.9271, lng: 79.9612 }, // Default center: Colombo, Sri Lanka
+          zoom: 12,
         });
 
         drawingManager = new google.maps.drawing.DrawingManager({
-            drawingMode: google.maps.drawing.OverlayType.POLYGON,
-            drawingControl: true,
-            drawingControlOptions: {
-                position: google.maps.ControlPosition.TOP_CENTER,
-                drawingModes: ['polygon']
-            },
-            polygonOptions: {
-                editable: true,
-                draggable: true,
-                fillColor: '#FF0000',
-                fillOpacity: 0.35,
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 2
-            }
+          drawingMode: google.maps.drawing.OverlayType.POLYGON,
+          drawingControl: true,
+          drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_CENTER,
+            drawingModes: ["polygon"],
+          },
+          polygonOptions: {
+            editable: true,
+            draggable: true,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+          },
         });
 
         drawingManager.setMap(map);
 
-        google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
+        google.maps.event.addListener(
+          drawingManager,
+          "overlaycomplete",
+          function (event) {
             if (polygon) {
-                polygon.setMap(null); // Remove existing polygon
+              polygon.setMap(null); // Remove existing polygon
             }
             polygon = event.overlay; // Set new polygon
             drawingManager.setDrawingMode(null); // Stop drawing mode after polygon is drawn
 
             updateRemoveIconPosition();
             calculateArea();
-            removeIcon.style.display = 'block'; // Show the remove icon
+            removeIcon.style.display = "block"; // Show the remove icon
 
             // Add event listeners for editing the polygon
-            polygon.getPath().addListener('set_at', calculateArea);
-            polygon.getPath().addListener('insert_at', calculateArea);
-        });
+            polygon.getPath().addListener("set_at", calculateArea);
+            polygon.getPath().addListener("insert_at", calculateArea);
+          }
+        );
 
         addRemoveIcon();
-    }
+      }
 
-    function calculateArea() {
+      function calculateArea() {
         if (polygon) {
-            const path = polygon.getPath();
-            const area = google.maps.geometry.spherical.computeArea(path);
-            document.getElementById('size').value = area.toFixed(2); // Show area in the size field
+          const path = polygon.getPath();
+          const area = google.maps.geometry.spherical.computeArea(path);
+          document.getElementById("size").value = area.toFixed(2); // Show area in the size field
         }
-    }
+      }
 
-    function addRemoveIcon() {
-        removeIcon = document.createElement('div');
-        removeIcon.classList.add('remove-icon');
-        removeIcon.innerHTML = '✖';
+      function addRemoveIcon() {
+        removeIcon = document.createElement("div");
+        removeIcon.classList.add("remove-icon");
+        removeIcon.innerHTML = "✖";
         document.body.appendChild(removeIcon);
-        removeIcon.addEventListener('click', clearPolygon);
-    }
+        removeIcon.addEventListener("click", clearPolygon);
+      }
 
-    function updateRemoveIconPosition() {
+      function updateRemoveIconPosition() {
         if (polygon) {
-            const bounds = new google.maps.LatLngBounds();
-            polygon.getPath().forEach(function(latLng) {
-                bounds.extend(latLng);
-            });
-            const center = bounds.getCenter();
+          const bounds = new google.maps.LatLngBounds();
+          polygon.getPath().forEach(function (latLng) {
+            bounds.extend(latLng);
+          });
+          const center = bounds.getCenter();
 
-            // Convert the center position to pixel coordinates and position the remove icon accordingly
-            const overlayProjection = map.getProjection();
-            const point = overlayProjection.fromLatLngToPoint(center);
-            const mapDiv = map.getDiv();
-            const x = point.x * mapDiv.offsetWidth;
-            const y = point.y * mapDiv.offsetHeight;
+          // Convert the center position to pixel coordinates and position the remove icon accordingly
+          const overlayProjection = map.getProjection();
+          const point = overlayProjection.fromLatLngToPoint(center);
+          const mapDiv = map.getDiv();
+          const x = point.x * mapDiv.offsetWidth;
+          const y = point.y * mapDiv.offsetHeight;
 
-            removeIcon.style.left = `${x}px`;
-            removeIcon.style.top = `${y}px`;
+          removeIcon.style.left = `${x}px`;
+          removeIcon.style.top = `${y}px`;
         }
-    }
+      }
 
-    function clearPolygon() {
+      function clearPolygon() {
         if (polygon) {
-            polygon.setMap(null); // Clear polygon
-            document.getElementById('size').value = ''; // Clear size field
-            removeIcon.style.display = 'none'; // Hide the remove icon after clearing
-            polygon = null; // Reset the polygon variable
-            drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYGON); // Re-enable drawing mode
+          polygon.setMap(null); // Clear polygon
+          document.getElementById("size").value = ""; // Clear size field
+          removeIcon.style.display = "none"; // Hide the remove icon after clearing
+          polygon = null; // Reset the polygon variable
+          drawingManager.setDrawingMode(
+            google.maps.drawing.OverlayType.POLYGON
+          ); // Re-enable drawing mode
         }
-    }
+      }
 
-    // Fetch land data for updating
-    async function fetchLandData(id) {
+      // Fetch land data for updating
+      async function fetchLandData(id) {
         try {
-            const response = await fetch(`http://localhost:8080/api/land/${id}`);
-            if (response.ok) {
-                const land = await response.json();
-                document.getElementById('owner').value = land.owner;
-                document.getElementById('landType').value = land.landType;
-                document.getElementById('ownership').value = land.ownership;
-                document.getElementById('size').value = land.size;
+          const response = await fetch(`http://localhost:8080/api/land/${id}`);
+          if (response.ok) {
+            const land = await response.json();
+            document.getElementById("owner").value = land.owner;
+            document.getElementById("landType").value = land.landType;
+            document.getElementById("ownership").value = land.ownership;
+            document.getElementById("size").value = land.size;
 
-                if (land.coordinates && land.coordinates.length) {
-                    const path = land.coordinates.map(coord => new google.maps.LatLng(coord.latitude, coord.longitude));
-                    polygon = new google.maps.Polygon({
-                        paths: path,
-                        map: map,
-                        editable: true,
-                        draggable: true,
-                        fillColor: '#FF0000',
-                        fillOpacity: 0.35,
-                        strokeColor: '#FF0000',
-                        strokeOpacity: 0.8,
-                        strokeWeight: 2
-                    });
-                    drawingManager.setDrawingMode(null); // Disable drawing mode when updating
-                    map.setCenter(path[0]); // Center the map on the polygon
-                    calculateArea();
-                    updateRemoveIconPosition();
-                    removeIcon.style.display = 'block';
-                }
-            } else {
-                showToast('Failed to load land data.', 'danger');
+            if (land.coordinates && land.coordinates.length) {
+              const path = land.coordinates.map(
+                (coord) =>
+                  new google.maps.LatLng(coord.latitude, coord.longitude)
+              );
+              polygon = new google.maps.Polygon({
+                paths: path,
+                map: map,
+                editable: true,
+                draggable: true,
+                fillColor: "#FF0000",
+                fillOpacity: 0.35,
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+              });
+              drawingManager.setDrawingMode(null); // Disable drawing mode when updating
+              map.setCenter(path[0]); // Center the map on the polygon
+              calculateArea();
+              updateRemoveIconPosition();
+              removeIcon.style.display = "block";
             }
+          } else {
+            showToast("Failed to load land data.", "danger");
+          }
         } catch (error) {
-            showToast('An error occurred while fetching land data.', 'danger');
+          showToast("An error occurred while fetching land data.", "danger");
         }
-    }
+      }
 
-    // Handle form submission
-    document.getElementById('landForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
+      // Handle form submission
+      document
+        .getElementById("landForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
 
-        const formData = {
-            owner: document.getElementById('owner').value,
-            landType: document.getElementById('landType').value,
-            ownership: document.getElementById('ownership').value,
-            size: document.getElementById('size').value,
-            coordinates: polygon.getPath().getArray().map(latLng => ({
+          const formData = {
+            owner: document.getElementById("owner").value,
+            landType: document.getElementById("landType").value,
+            ownership: document.getElementById("ownership").value,
+            size: document.getElementById("size").value,
+            coordinates: polygon
+              .getPath()
+              .getArray()
+              .map((latLng) => ({
                 latitude: latLng.lat(),
-                longitude: latLng.lng()
-            }))
-        };
+                longitude: latLng.lng(),
+              })),
+          };
 
-        try {
+          try {
             let response;
             if (landId) {
-                response = await fetch(`http://localhost:8080/api/land/${landId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
+              response = await fetch(
+                `http://localhost:8080/api/land/${landId}`,
+                {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(formData),
+                }
+              );
             } else {
-                response = await fetch('http://localhost:8080/api/land', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
+              response = await fetch("http://localhost:8080/api/land", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+              });
             }
 
             if (response.ok) {
-                showToast('Land saved successfully!', 'success');
-                setTimeout(() => {
-                    window.location.href = 'table.html';
-                }, 2000); // Redirect after 2 seconds
+              showToast("Land saved successfully!", "success");
+              setTimeout(() => {
+                window.location.href = "table.html";
+              }, 2000); // Redirect after 2 seconds
             } else {
-                showToast('Land saved successfully!', 'success');
+              showToast("Land saved successfully!", "success");
             }
-        } catch (error) {
-            showToast('Land saved successfully!', 'success');
-        }
-    });
+          } catch (error) {
+            showToast("Land saved successfully!", "success");
+          }
+        });
 
-    // Function to show toast notifications
-    function showToast(message, type) {
-        const toastContainer = document.getElementById('toast-container');
-        const toast = document.createElement('div');
+      // Function to show toast notifications
+      function showToast(message, type) {
+        const toastContainer = document.getElementById("toast-container");
+        const toast = document.createElement("div");
         toast.className = `toast align-items-center text-white bg-${type} border-0`;
-        toast.role = 'alert';
-        toast.ariaLive = 'assertive';
-        toast.ariaAtomic = 'true';
+        toast.role = "alert";
+        toast.ariaLive = "assertive";
+        toast.ariaAtomic = "true";
         toast.innerHTML = `
             <div class="d-flex">
                 <div class="toast-body">${message}</div>
@@ -441,13 +494,12 @@
 
         toastContainer.appendChild(toast);
         $(toast).toast({ delay: 3000 });
-        $(toast).toast('show');
+        $(toast).toast("show");
 
         setTimeout(() => {
-            toastContainer.removeChild(toast);
+          toastContainer.removeChild(toast);
         }, 3000); // Remove toast after 3 seconds
-    }
-</script>
-
-</body>
+      }
+    </script>
+  </body>
 </html>
