@@ -27,32 +27,37 @@ function createSidebar() {
   const navItems = [
     {
       path: "complain/index.html",
-      icon: "fas fa-exclamation-triangle",
+      icon: "fas fa-exclamation-circle",
       label: "Complain",
       key: "complain",
     },
     {
       path: "event/index.html",
-      icon: "fas fa-calendar-alt",
+      icon: "fas fa-calendar-check",
       label: "Event",
       key: "event",
     },
     {
       path: "fund/index.html",
-      icon: "fas fa-money-bill-wave",
+      icon: "fas fa-piggy-bank",
       label: "Fund",
       key: "fund",
     },
     {
       path: "house/index.html",
-      icon: "fas fa-home",
+      icon: "fas fa-house-user",
       label: "House",
       key: "house",
     },
-    { path: "land/index.html", icon: "fas fa-map", label: "Land", key: "land" },
+    {
+      path: "land/index.html",
+      icon: "fas fa-map-marked-alt",
+      label: "Land",
+      key: "land",
+    },
     {
       path: "person/index.html",
-      icon: "fas fa-users",
+      icon: "fas fa-user-friends",
       label: "Person",
       key: "person",
     },
