@@ -6,6 +6,7 @@ import com.nuwan.LandMapDemo.domain.Land;
 import java.util.List;
 
 import com.nuwan.LandMapDemo.dto.LandDTO;
+import com.nuwan.LandMapDemo.dto.LandFilterDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,4 +21,5 @@ public interface LandService {
     boolean deleteLandById(Long id);
     boolean deleteLandsByOwnerId(String id);
     LandDTO updateLandById(Long id, LandDTO landDTO);
+    Page<LandDTO> getLandsWithAdvancedFilter(LandFilterDTO filterDTO, int page, int size, String orderBy, String order);
 }

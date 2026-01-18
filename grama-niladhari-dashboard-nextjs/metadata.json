@@ -1,0 +1,9 @@
+{
+  "name": "Sri Lanka Village Management System",
+  "description": "A minimalist, production-grade administrative platform for Grama Niladhari and Villagers, featuring land mapping, family relation graphs, and certificate management.",
+  "requestFramePermissions": [
+    "geolocation",
+    "camera",
+    "microphone"
+  ]
+}

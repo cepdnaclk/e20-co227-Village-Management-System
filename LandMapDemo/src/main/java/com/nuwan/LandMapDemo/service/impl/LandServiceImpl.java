@@ -4,6 +4,7 @@ import com.nuwan.LandMapDemo.domain.Coordinate;
 import com.nuwan.LandMapDemo.domain.Land;
 import com.nuwan.LandMapDemo.domain.Person;
 import com.nuwan.LandMapDemo.dto.LandDTO;
+import com.nuwan.LandMapDemo.dto.LandFilterDTO;
 import com.nuwan.LandMapDemo.repository.CoordinateRepository;
 import com.nuwan.LandMapDemo.repository.LandRepository;
 import com.nuwan.LandMapDemo.repository.PersonRepository;
@@ -181,5 +182,22 @@ public class LandServiceImpl implements LandService {
             System.out.println(e);
             return null;
         }
+    }
+
+    @Override
+    public Page<LandDTO> getLandsWithAdvancedFilter(LandFilterDTO filterDTO, int page, int size, String orderBy, String order) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(order), orderBy);
+        
+        Page<Land> landPage = landRepository.findLandsWithAdvancedFilters(
+            filterDTO.getMinSize(),
+            filterDTO.getMaxSize(),
+            filterDTO.getLandType(),
+            filterDTO.getOwnership(),
+            filterDTO.getOwnerId(),
+            filterDTO.getSearchTerm(),
+            pageable
+        );
+        
+        return landPage.map(LandUtils::toDTO);
     }
 }

@@ -41,16 +41,32 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public boolean createPerson(PersonDTO personDTO) {
         try {
+            // Check if person already exists
+            if (personDTO.getId() == null || personDTO.getId().isEmpty()) {
+                System.out.println("Error: Person ID is required");
+                return false;
+            }
+            
+            if (personRepository.existsById(personDTO.getId())) {
+                System.out.println("Error: Person with ID " + personDTO.getId() + " already exists");
+                return false;
+            }
+
             Person person = new Person();
             person.setId(personDTO.getId());
             person.setName(personDTO.getName());
             person.setOccupation(personDTO.getOccupation());
             person.setDob(personDTO.getDob());
-            person.setIncome(personDTO.getIncome());
+            person.setIncome(personDTO.getIncome() != 0 ? personDTO.getIncome() : 0.0);
             person.setPhoneNumber(personDTO.getPhoneNumber());
+            person.setGender(personDTO.getGender());
+            person.setBehavior(personDTO.getBehavior());
+            person.setHealth(personDTO.getHealth());
+            person.setReligion(personDTO.getReligion());
+            person.setNation(personDTO.getNation());
 
             List<PersonFund> personFundsList = new ArrayList<>();
-            if (personDTO.getFunds() != null) {
+            if (personDTO.getFunds() != null && !personDTO.getFunds().isEmpty()) {
                 for (Long fund : personDTO.getFunds()) {
                     personFundsList.add(personFundRepository.findById(fund).orElseThrow(() -> new RuntimeException("Fund is not found")));
                 }
@@ -58,23 +74,27 @@ public class PersonServiceImpl implements PersonService {
             person.setFunds(personFundsList);
 
             List<Land> lands = new ArrayList<>();
-            if (personDTO.getLands() != null) {;
+            if (personDTO.getLands() != null && !personDTO.getLands().isEmpty()) {
                 for (Long land : personDTO.getLands()) {
                     lands.add(landRepository.findById(land).orElseThrow(() -> new RuntimeException("Land is not found")));
                 }
             }
             person.setLands(lands);
 
-            if (personDTO.getHouse() != null) {
-                person.setHouse(houseRepository.findById(personDTO.getHouse()).orElseThrow(() -> new RuntimeException("House is not find")));
+            if (personDTO.getHouse() != null && !personDTO.getHouse().isEmpty()) {
+                person.setHouse(houseRepository.findById(personDTO.getHouse()).orElseThrow(() -> new RuntimeException("House is not found")));
             }
 
-            personRepository.save(person);
+            Person savedPerson = personRepository.save(person);
+            System.out.println("Person created successfully: " + savedPerson.getId() + " - " + savedPerson.getName());
+            System.out.println("Person saved to database with ID: " + savedPerson.getId());
 
             return true;
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println("Error creating person: " + e.getMessage());
+            System.err.println("Exception type: " + e.getClass().getName());
+            e.printStackTrace();
             return false;
         }
     }

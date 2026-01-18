@@ -1,8 +1,11 @@
 package com.nuwan.LandMapDemo.controller;
 
 import com.nuwan.LandMapDemo.domain.Event;
+import com.nuwan.LandMapDemo.dto.EventDTO;
 import com.nuwan.LandMapDemo.service.EventService;
+import com.nuwan.LandMapDemo.service.impl.EventServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,7 @@ import java.util.Optional;
 public class EventController {
 
     private final EventService eventService;
+    private final EventServiceImpl eventServiceImpl;
 
     @PostMapping
     public ResponseEntity<Void> createEvent(@RequestBody Event event) {
@@ -80,5 +84,31 @@ public class EventController {
     public ResponseEntity<List<Event>> getTodayEvents() {
         List<Event> events = eventService.getTodayEvents();
         return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+
+    @GetMapping("/grama-niladhari/{gramaNiladhariId}")
+    public ResponseEntity<List<EventDTO>> getEventsByGramaNiladhariId(@PathVariable String gramaNiladhariId) {
+        List<EventDTO> events = eventServiceImpl.getEventsByGramaNiladhariId(gramaNiladhariId);
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+
+    @GetMapping("/grama-niladhari/{gramaNiladhariId}/date-range")
+    public ResponseEntity<List<EventDTO>> getEventsByGramaNiladhariAndDateRange(
+            @PathVariable String gramaNiladhariId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        List<EventDTO> events = eventServiceImpl.getEventsByGramaNiladhariAndDateRange(gramaNiladhariId, startDate, endDate);
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<EventDTO>> getEventsByStatus(@PathVariable String status) {
+        try {
+            Event.EventStatus eventStatus = Event.EventStatus.valueOf(status.toUpperCase());
+            List<EventDTO> events = eventServiceImpl.getEventsByStatus(eventStatus);
+            return new ResponseEntity<>(events, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

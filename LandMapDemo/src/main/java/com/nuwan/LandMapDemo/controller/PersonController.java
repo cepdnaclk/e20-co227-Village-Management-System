@@ -29,8 +29,16 @@ public class PersonController {
 
     @PostMapping("/")
     public ResponseEntity<Void> createPerson(@RequestBody PersonDTO personDTO) {
-        if (personService.createPerson(personDTO)) return new ResponseEntity<>(HttpStatus.CREATED);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        System.out.println("Received person creation request for ID: " + personDTO.getId());
+        System.out.println("Person name: " + personDTO.getName());
+        boolean result = personService.createPerson(personDTO);
+        if (result) {
+            System.out.println("Person creation successful, returning 201 CREATED");
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } else {
+            System.out.println("Person creation failed, returning 400 BAD_REQUEST");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/")

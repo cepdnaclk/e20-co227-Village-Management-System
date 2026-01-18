@@ -3,6 +3,7 @@ package com.nuwan.LandMapDemo.controller;
 import com.nuwan.LandMapDemo.domain.Coordinate;
 import com.nuwan.LandMapDemo.domain.Land;
 import com.nuwan.LandMapDemo.dto.LandDTO;
+import com.nuwan.LandMapDemo.dto.LandFilterDTO;
 import com.nuwan.LandMapDemo.service.LandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -97,6 +98,37 @@ public class LandController {
     public ResponseEntity<Void> deleteLandById(@PathVariable("id") Long id) {
         if (landService.deleteLandById(id)) return new ResponseEntity<>(HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/filter")
+    public ResponseEntity<Map<String, Object>> getLandsWithAdvancedFilter(
+            @RequestBody LandFilterDTO filterDTO,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "order_by", defaultValue = "id") String orderBy,
+            @RequestParam(name = "order", defaultValue = "ASC") String order) {
+
+        // Validate the order parameter
+        if (!order.equalsIgnoreCase("ASC") && !order.equalsIgnoreCase("DESC")) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Validate page and size parameters
+        if (page < 0 || size <= 0) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Fetch paginated, filtered lands
+        Page<LandDTO> paginatedLands = landService.getLandsWithAdvancedFilter(filterDTO, page, size, orderBy, order);
+
+        // Prepare the response
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalElements", paginatedLands.getTotalElements());
+        response.put("lands", paginatedLands.getContent());
+        response.put("currentPage", paginatedLands.getNumber());
+        response.put("totalPages", paginatedLands.getTotalPages());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
